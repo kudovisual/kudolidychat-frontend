@@ -7,3 +7,4 @@
 * E-mail: kudovisual02@gmail.com
 # Thông tin
 * Xem trước hình ảnh trước khi chạy ở thư mục "screenshot".
+* Code là sự kết hợp giữa **Frontend** và **Backend**.
