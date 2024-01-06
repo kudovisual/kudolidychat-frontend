@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KudoLidy Chat | KudoVisual</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Container styling */
+#container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Login form styling */
+#login {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#username {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#loginBtn {
+  padding: 8px 20px;
+  border-radius: 4px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* Chat container styling */
+#chat {
+  display: none;
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+  max-height: 400px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+#messages li {
+  padding: 8px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+#messages li:last-child {
+  border-bottom: none;
+}
+
+/* Input form styling */
+#form {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+#input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#form button {
+  padding: 8px 20px;
+  border-radius: 4px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* User connection status styling */
+.user-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+  </style>
+</head>
+<body>
+  <div id="login">
+    <input type="text" id="username" placeholder="Enter your username">
+    <button id="loginBtn">Login</button>
+  </div>
+
+  <div id="chat" style="display: none;">
+    <div id="chatContainer">
+      <ul id="messages"></ul>
+    </div>
+    <form id="form">
+      <input id="input" autocomplete="off" />
+      <button>Gửi</button>
+    </form>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const loginDiv = document.getElementById('login');
+    const chatDiv = document.getElementById('chat');
+
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const username = document.getElementById('username').value;
+      socket.emit('new user', username);
+      loginDiv.style.display = 'none';
+      chatDiv.style.display = 'block';
+    });
+
+    document.getElementById('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = document.getElementById('input').value;
+      const username = document.getElementById('username').value;
+      socket.emit('chat message', { message, username });
+      document.getElementById('input').value = '';
+    });
+
+    socket.on('chat message', (data) => {
+      const { message, username, time } = data;
+      const item = document.createElement('li');
+      item.innerHTML = `<strong>${username}</strong> (${time}): ${message}`;
+      document.getElementById('messages').appendChild(item);
+    });
+
+    socket.on('user connected', (username) => {
+      const connectedMsg = document.createElement('div');
+      connectedMsg.textContent = `${username} has joined the chat`;
+      document.getElementById('messages').appendChild(connectedMsg);
+    });
+
+    socket.on('user disconnected', (username) => {
+      const disconnectedMsg = document.createElement('div');
+      disconnectedMsg.textContent = `${username} has left the chat`;
+      document.getElementById('messages').appendChild(disconnectedMsg);
+    });
+  </script>
+</body>
+
+<li><a href="/copyright.html">Bản quyền</li>
+  <li><a href="//facebook.com/kudovisual">Facebook của mình</a></li>
+  <li><a href="/contact.html">Liên hệ</a></li>
+<p>© 2024 Copyright by KudoVisual</p>
+</html>
